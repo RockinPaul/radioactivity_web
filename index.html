@@ -77,7 +77,7 @@
         <button
             onclick="Telegram.WebApp.showAlert(decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param));">Launch
             Alert</button>
-        <button onclick="showPopup();">Launch Popup</button>
+        <button onclick="launchStream();">Play</button>
 
         <h1>Links</h1>
         <ul>
@@ -110,6 +110,8 @@
         Telegram.WebApp.backgroundColor = "#000000"
         document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
 
+        let streamUrl = ""
+
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
         Telegram.WebApp.onEvent('themeChanged', function () {
             document.documentElement.className = Telegram.WebApp.colorScheme;
@@ -123,6 +125,23 @@
             Telegram.WebApp.showAlert('Main Button was clicked')
         });
         Telegram.WebApp.MainButton.show();
+
+        function launchStream() {
+            Telegram.WebApp.showPopup({
+                title: 'URL to launch',
+                message: streamUrl,
+                buttons: [
+                    { id: 'link', type: 'default', text: 'Play' },
+                    { type: 'Cancel' },
+                ]
+            }, function (btn) {
+                if (btn === 'link') {
+                    Telegram.WebApp.openLink(streamUrl, { 
+                        try_instant_view: true
+                    });
+                }
+            });
+        }
 
         // Function to call showPopup API
         function showPopup() {
@@ -174,6 +193,9 @@
             // aHR0cHM6Ly9kZWx0YS5yYWRpb3BsYXllci5jb20uYXIvc3RyZWFtL2xvczQw
             const validUTF16StringDecoded = new TextDecoder().decode(base64ToBytes(validUTF16StringEncoded));
             console.log(`Decoded string: [${validUTF16StringDecoded}]`);
+
+            streamUrl = validUTF16StringDecoded
+
             return validUTF16StringDecoded
         }
 
