@@ -65,10 +65,10 @@
 <body>
     <main>
         <div align="center">
-            <a href="https://ton.org/"><img width="48" src="./assets/tapps.png" alt="telegram logo"></a>
+            <a href="t.me/@disaster_info_bot"><img width="48" src="./assets/tapps.png" alt="telegram logo"></a>
         </div>
         <h1>Modals</h1>
-        <button onclick="Telegram.WebApp.showAlert('Hello World!');">Launch Alert</button>
+        <button onclick="Telegram.WebApp.showAlert(Telegram.WebApp.initData);">Launch Alert</button>
         <button onclick="showPopup();">Launch Popup</button>
 
         <h1>Links</h1>
@@ -95,6 +95,10 @@
     <script>
         // Init TWA
         Telegram.WebApp.ready();
+
+        // TODO: override style settings in CSS.
+        Telegram.WebApp.backgroundColor = "#000000"
+        document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
 
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
         Telegram.WebApp.onEvent('themeChanged', function() {
