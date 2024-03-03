@@ -148,6 +148,12 @@
             expandEl.innerText = 'Is Expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false');
         }
 
+        // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem.
+        function bytesToBase64(bytes) {
+            const binString = String.fromCodePoint(...bytes);
+            return btoa(binString);
+        }
+
         function decodeUrl(validUTF16StringEncoded) {
             // aHR0cHM6Ly9kZWx0YS5yYWRpb3BsYXllci5jb20uYXIvc3RyZWFtL2xvczQw
             const validUTF16StringDecoded = new TextDecoder().decode(base64ToBytes(validUTF16StringEncoded));
