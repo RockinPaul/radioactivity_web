@@ -127,6 +127,9 @@
         Telegram.WebApp.MainButton.show();
 
         function launchStream() {
+            if (streamUrl.length === 0) {
+                streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+            }
             Telegram.WebApp.showPopup({
                 title: 'URL to launch',
                 message: streamUrl,
@@ -193,9 +196,6 @@
             // aHR0cHM6Ly9kZWx0YS5yYWRpb3BsYXllci5jb20uYXIvc3RyZWFtL2xvczQw
             const validUTF16StringDecoded = new TextDecoder().decode(base64ToBytes(validUTF16StringEncoded));
             console.log(`Decoded string: [${validUTF16StringDecoded}]`);
-
-            streamUrl = validUTF16StringDecoded
-
             return validUTF16StringDecoded
         }
 
