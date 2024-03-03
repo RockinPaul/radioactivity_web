@@ -68,7 +68,7 @@
             <a href="http://t.me/disaster_info_bot"><img width="48" src="./assets/tapps.png" alt="telegram logo"></a>
         </div>
         <h1>Modals</h1>
-        <button onclick="Telegram.WebApp.showAlert(window.Telegram.WebApp.initDataUnsafe.start_param);">Launch Alert</button>
+        <button onclick="Telegram.WebApp.showAlert(decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param));">Launch Alert</button>
         <button onclick="showPopup();">Launch Popup</button>
 
         <h1>Links</h1>
@@ -146,6 +146,13 @@
 
             var expandEl = document.querySelector('#viewport-params-expand');
             expandEl.innerText = 'Is Expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false');
+        }
+
+        function decodeUrl(validUTF16StringEncoded) {
+            // aHR0cHM6Ly9kZWx0YS5yYWRpb3BsYXllci5jb20uYXIvc3RyZWFtL2xvczQw
+            const validUTF16StringDecoded = new TextDecoder().decode(base64ToBytes(validUTF16StringEncoded));
+            console.log(`Decoded string: [${validUTF16StringDecoded}]`);
+            return validUTF16StringDecoded
         }
 
         Telegram.WebApp.setHeaderColor('secondary_bg_color');
