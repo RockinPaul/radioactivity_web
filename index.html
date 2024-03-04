@@ -92,9 +92,7 @@
                 <a href="javascript:Telegram.WebApp.openLink('https://telegra.ph/api',{try_instant_view:true});">Open
                     link inside Telegram webview</a>
             </li>
-            <button onclick="player.play();">Play</button>
-            <button onclick="player.pause();">Pause</button>
-
+            <button onclick="togglePlayback();">Toggle playback</button>
         </ul>
 
         <h1>Buttons</h1>
@@ -131,10 +129,10 @@
         Telegram.WebApp.MainButton.show();
 
         function launchStream() {
-            if (streamUrl.length === 0) {
-                streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
-                player = new Audio(streamUrl)
-            }
+            // if (streamUrl.length === 0) {
+            //     streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+            //     player = new Audio(streamUrl)
+            // }
             Telegram.WebApp.showPopup({
                 title: 'URL to launch',
                 message: streamUrl,
@@ -144,12 +142,24 @@
                 ]
             }, function (btn) {
                 if (btn === 'link') {
-                    player.play()
+                    togglePlayback()
                     // Telegram.WebApp.openLink(streamUrl, { 
                     //     try_instant_view: true
                     // });
                 }
             });
+        }
+
+        function togglePlayback() {
+            if (player.currentSrc === "") {
+                streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+                player = new Audio(streamUrl)
+            }
+            if (player.paused) {
+                player.play()
+            } else {
+                player.pause()
+            }
         }
 
         // Function to call showPopup API
