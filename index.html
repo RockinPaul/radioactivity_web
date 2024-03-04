@@ -77,7 +77,7 @@
         <button
             onclick="Telegram.WebApp.showAlert(decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param));">Launch
             Alert</button>
-        <button onclick="launchStream();">Play</button>
+        <button onclick="launchStream();">Launch</button>
 
         <h1>Links</h1>
         <ul>
@@ -92,6 +92,9 @@
                 <a href="javascript:Telegram.WebApp.openLink('https://telegra.ph/api',{try_instant_view:true});">Open
                     link inside Telegram webview</a>
             </li>
+            <button onclick="player.play();">Play</button>
+            <button onclick="player.pause();">Pause</button>
+
         </ul>
 
         <h1>Buttons</h1>
@@ -111,6 +114,7 @@
         document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
 
         let streamUrl = ""
+        let player = new Audio()
 
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
         Telegram.WebApp.onEvent('themeChanged', function () {
@@ -129,6 +133,7 @@
         function launchStream() {
             if (streamUrl.length === 0) {
                 streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+                player = new Audio(streamUrl)
             }
             Telegram.WebApp.showPopup({
                 title: 'URL to launch',
@@ -139,7 +144,7 @@
                 ]
             }, function (btn) {
                 if (btn === 'link') {
-                    play(streamUrl)
+                    player.play()
                     // Telegram.WebApp.openLink(streamUrl, { 
                     //     try_instant_view: true
                     // });
@@ -162,11 +167,6 @@
                 }
             });
         };
-
-        function play(url) {
-            const audioElement = new Audio(url);
-            audioElement.play();
-        }
 
         // Function to toggle main TWA button
         function toggleMainButton() {
