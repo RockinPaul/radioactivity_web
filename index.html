@@ -129,9 +129,7 @@
         Telegram.WebApp.MainButton.show();
 
         function launchStream() {
-            if (streamUrl.length === 0) {
-                streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
-            }
+            streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
             Telegram.WebApp.showPopup({
                 title: 'URL to launch',
                 message: streamUrl,
