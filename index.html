@@ -139,9 +139,10 @@
                 ]
             }, function (btn) {
                 if (btn === 'link') {
-                    Telegram.WebApp.openLink(streamUrl, { 
-                        try_instant_view: true
-                    });
+                    play(streamUrl)
+                    // Telegram.WebApp.openLink(streamUrl, { 
+                    //     try_instant_view: true
+                    // });
                 }
             });
         }
@@ -161,6 +162,11 @@
                 }
             });
         };
+
+        function play(url) {
+            const audioElement = new Audio(url);
+            audioElement.play();
+        }
 
         // Function to toggle main TWA button
         function toggleMainButton() {
