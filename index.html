@@ -208,8 +208,9 @@
             player.controls = true
             if (streamUrl === "") {
                 streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
-                player = new Audio(streamUrl)
             }
+            player = new Audio(streamUrl)
+
             if (player.paused) {
                 player.play().then(_ => updateMetadata()).catch(error => console.log(error));
             } else {
