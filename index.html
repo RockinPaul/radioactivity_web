@@ -132,13 +132,16 @@
 
         navigator.mediaSession.setActionHandler('play', async function () {
             log('> User clicked "Play" icon.');
-            await player.play();
+            // await player.play();
+            togglePlayback();
             // Do something more than just playing audio...
         });
 
         navigator.mediaSession.setActionHandler('pause', function () {
-            log('> User clicked "Pause" icon.');
-            player.pause();
+            // log('> User clicked "Pause" icon.');
+            // player.pause();
+            togglePlayback();
+
             // Do something more than just pausing audio...
         });
 
