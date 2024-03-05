@@ -93,6 +93,8 @@
                     link inside Telegram webview</a>
             </li>
             <button onclick="togglePlayback();">Toggle playback</button>
+
+            <button id="playButton">▶ PLAY</button>
         </ul>
 
         <h1>Buttons</h1>
@@ -111,8 +113,8 @@
         Telegram.WebApp.backgroundColor = "#000000"
         document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
 
-        let streamUrl = ""
-        let player = new Audio()
+        let streamUrl = "";
+        let player = new Audio();
 
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
         Telegram.WebApp.onEvent('themeChanged', function () {
@@ -127,6 +129,12 @@
             Telegram.WebApp.showAlert('Main Button was clicked')
         });
         Telegram.WebApp.MainButton.show();
+
+
+        // This prevents unnecessary errors when Media Session API is not available.
+        navigator.mediaSession = navigator.mediaSession || {};
+        navigator.mediaSession.setActionHandler = navigator.mediaSession.setActionHandler || function () { };
+        window.MediaMetadata = window.MediaMetadata || function () { };
 
         /* Play & Pause */
 
@@ -305,6 +313,9 @@
         Telegram.WebApp.onEvent('themeChanged', function () {
             document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
         });
+
+        // Play button selector.
+        document.querySelector('#playButton').addEventListener('click', togglePlayback);
 
     </script>
 
