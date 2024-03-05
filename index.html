@@ -141,40 +141,6 @@
                 if (btn === 'link') {
                     streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
                     player = new Audio(streamUrl)
-                    const actionHandlers = [
-                        // play
-                        [
-                            "play",
-                            async () => {
-                                // play our audio
-                                await player.play()
-                                // set playback state
-                                navigator.mediaSession.playbackState = "playing";
-                                // update our status element
-                                updateStatus(allMeta[index], "Action: play  |  Track is playing…");
-                            },
-                        ],
-                        [
-                            "pause",
-                            () => {
-                                // pause out audio
-                                player.pause();
-                                // set playback state
-                                navigator.mediaSession.playbackState = "paused";
-                                // update our status element
-                                updateStatus(allMeta[index], "Action: pause  |  Track has been paused…");
-                            },
-                        ],
-                    ];
-
-                    for (const [action, handler] of actionHandlers) {
-                        try {
-                            navigator.mediaSession.setActionHandler(action, handler);
-                        } catch (error) {
-                            console.log(`The media session action "${action}" is not supported yet.`);
-                        }
-                    }
-
                     // togglePlayback()
                     // Telegram.WebApp.openLink(streamUrl, { 
                     //     try_instant_view: true
@@ -183,6 +149,85 @@
             });
         }
 
+        function updateMetadata() {
+            let track = streamUrl;
+
+            log('Playing ' + streamUrl + '...');
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: "Radio",
+                artist: "Artist",
+                album: "Album",
+                artwork: "https://storage.googleapis.com/media-session/sintel/artwork-96.png"
+            });
+            // Media is loaded, set the duration.
+            updatePositionState();
+        }
+
+        /* Position state (supported since Chrome 81) */
+
+        // function updatePositionState() {
+        //     if ('setPositionState' in navigator.mediaSession) {
+        //         log('Updating position state...');
+        //         navigator.mediaSession.setPositionState({
+        //             duration: audio.duration,
+        //             playbackRate: audio.playbackRate,
+        //             position: audio.currentTime
+        //         });
+        //     }
+        // }
+
+        /* Previous Track & Next Track */
+
+        // navigator.mediaSession.setActionHandler('previoustrack', function () {
+        //     log('> User clicked "Previous Track" icon.');
+        //     index = (index - 1 + playlist.length) % playlist.length;
+        //     playAudio();
+        // });
+
+        // navigator.mediaSession.setActionHandler('nexttrack', function () {
+        //     log('> User clicked "Next Track" icon.');
+        //     index = (index + 1) % playlist.length;
+        //     playAudio();
+        // });
+
+        // audio.addEventListener('ended', function () {
+        //     // Play automatically the next track when audio ends.
+        //     index = (index - 1 + playlist.length) % playlist.length;
+        //     playAudio();
+        // });
+
+        /* Play & Pause */
+
+        navigator.mediaSession.setActionHandler('play', async function () {
+            log('> User clicked "Play" icon.');
+            await player.play();
+            // Do something more than just playing audio...
+        });
+
+        navigator.mediaSession.setActionHandler('pause', function () {
+            log('> User clicked "Pause" icon.');
+            player.pause();
+            // Do something more than just pausing audio...
+        });
+
+        audio.addEventListener('play', function () {
+            navigator.mediaSession.playbackState = 'playing';
+        });
+
+        audio.addEventListener('pause', function () {
+            navigator.mediaSession.playbackState = 'paused';
+        });
+
+        try {
+            navigator.mediaSession.setActionHandler('stop', function () {
+                log('> User clicked "Stop" icon.');
+                // TODO: Clear UI playback...
+            });
+        } catch (error) {
+            log('Warning! The "stop" media session action is not supported.');
+        }
+
+
         function togglePlayback() {
             player.controls = true
             if (player.currentSrc === "") {
@@ -190,7 +235,7 @@
                 player = new Audio(streamUrl)
             }
             if (player.paused) {
-                player.play()
+                player.play().then(_ => updateMetadata()).catch(error => log(error));
             } else {
                 player.pause()
             }
