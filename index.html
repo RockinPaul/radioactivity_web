@@ -148,6 +148,7 @@
         }
 
         function togglePlayback() {
+            player.controls = true
             if (player.currentSrc === "") {
                 streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
                 player = new Audio(streamUrl)
