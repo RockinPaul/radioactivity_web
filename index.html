@@ -139,7 +139,43 @@
                 ]
             }, function (btn) {
                 if (btn === 'link') {
-                    togglePlayback()
+                    streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+                    player = new Audio(streamUrl)
+                    const actionHandlers = [
+                        // play
+                        [
+                            "play",
+                            async () => {
+                                // play our audio
+                                await player.play()
+                                // set playback state
+                                navigator.mediaSession.playbackState = "playing";
+                                // update our status element
+                                updateStatus(allMeta[index], "Action: play  |  Track is playing…");
+                            },
+                        ],
+                        [
+                            "pause",
+                            () => {
+                                // pause out audio
+                                player.pause();
+                                // set playback state
+                                navigator.mediaSession.playbackState = "paused";
+                                // update our status element
+                                updateStatus(allMeta[index], "Action: pause  |  Track has been paused…");
+                            },
+                        ],
+                    ];
+
+                    for (const [action, handler] of actionHandlers) {
+                        try {
+                            navigator.mediaSession.setActionHandler(action, handler);
+                        } catch (error) {
+                            console.log(`The media session action "${action}" is not supported yet.`);
+                        }
+                    }
+
+                    // togglePlayback()
                     // Telegram.WebApp.openLink(streamUrl, { 
                     //     try_instant_view: true
                     // });
