@@ -131,6 +131,9 @@
         Telegram.WebApp.MainButton.show();
 
 
+        if (!('mediaSession' in navigator)) {
+            console.log('The Media Session API is not yet available. Try Chrome for Android.');
+        }
         // This prevents unnecessary errors when Media Session API is not available.
         navigator.mediaSession = navigator.mediaSession || {};
         navigator.mediaSession.setActionHandler = navigator.mediaSession.setActionHandler || function () { };
