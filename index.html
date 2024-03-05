@@ -141,6 +141,37 @@
                 if (btn === 'link') {
                     streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
                     player = new Audio(streamUrl)
+
+                    /* Play & Pause */
+
+                    navigator.mediaSession.setActionHandler('play', async function () {
+                        log('> User clicked "Play" icon.');
+                        await player.play();
+                        // Do something more than just playing audio...
+                    });
+
+                    navigator.mediaSession.setActionHandler('pause', function () {
+                        log('> User clicked "Pause" icon.');
+                        player.pause();
+                        // Do something more than just pausing audio...
+                    });
+
+                    audio.addEventListener('play', function () {
+                        navigator.mediaSession.playbackState = 'playing';
+                    });
+
+                    audio.addEventListener('pause', function () {
+                        navigator.mediaSession.playbackState = 'paused';
+                    });
+
+                    try {
+                        navigator.mediaSession.setActionHandler('stop', function () {
+                            log('> User clicked "Stop" icon.');
+                            // TODO: Clear UI playback...
+                        });
+                    } catch (error) {
+                        log('Warning! The "stop" media session action is not supported.');
+                    }
                     // togglePlayback()
                     // Telegram.WebApp.openLink(streamUrl, { 
                     //     try_instant_view: true
@@ -195,38 +226,6 @@
         //     index = (index - 1 + playlist.length) % playlist.length;
         //     playAudio();
         // });
-
-        /* Play & Pause */
-
-        navigator.mediaSession.setActionHandler('play', async function () {
-            log('> User clicked "Play" icon.');
-            await player.play();
-            // Do something more than just playing audio...
-        });
-
-        navigator.mediaSession.setActionHandler('pause', function () {
-            log('> User clicked "Pause" icon.');
-            player.pause();
-            // Do something more than just pausing audio...
-        });
-
-        audio.addEventListener('play', function () {
-            navigator.mediaSession.playbackState = 'playing';
-        });
-
-        audio.addEventListener('pause', function () {
-            navigator.mediaSession.playbackState = 'paused';
-        });
-
-        try {
-            navigator.mediaSession.setActionHandler('stop', function () {
-                log('> User clicked "Stop" icon.');
-                // TODO: Clear UI playback...
-            });
-        } catch (error) {
-            log('Warning! The "stop" media session action is not supported.');
-        }
-
 
         function togglePlayback() {
             player.controls = true
