@@ -113,7 +113,7 @@
         Telegram.WebApp.backgroundColor = "#000000"
         document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
 
-        let streamUrl = "";
+        let streamUrl = "http://radio.daj.ba:8082/stream";
         let player = new Audio();
 
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
@@ -139,7 +139,6 @@
         /* Play & Pause */
 
         navigator.mediaSession.setActionHandler('play', async function () {
-            log('> User clicked "Play" icon.');
             // await player.play();
             togglePlayback();
             // Do something more than just playing audio...
@@ -149,7 +148,6 @@
             // log('> User clicked "Pause" icon.');
             // player.pause();
             togglePlayback();
-
             // Do something more than just pausing audio...
         });
 
@@ -163,11 +161,11 @@
 
         try {
             navigator.mediaSession.setActionHandler('stop', function () {
-                log('> User clicked "Stop" icon.');
+                // log('> User clicked "Stop" icon.');
                 // TODO: Clear UI playback...
             });
         } catch (error) {
-            log('Warning! The "stop" media session action is not supported.');
+            // log('Warning! The "stop" media session action is not supported.');
         }
 
         function launchStream() {
@@ -206,47 +204,14 @@
             updatePositionState();
         }
 
-        /* Position state (supported since Chrome 81) */
-
-        // function updatePositionState() {
-        //     if ('setPositionState' in navigator.mediaSession) {
-        //         log('Updating position state...');
-        //         navigator.mediaSession.setPositionState({
-        //             duration: audio.duration,
-        //             playbackRate: audio.playbackRate,
-        //             position: audio.currentTime
-        //         });
-        //     }
-        // }
-
-        /* Previous Track & Next Track */
-
-        // navigator.mediaSession.setActionHandler('previoustrack', function () {
-        //     log('> User clicked "Previous Track" icon.');
-        //     index = (index - 1 + playlist.length) % playlist.length;
-        //     playAudio();
-        // });
-
-        // navigator.mediaSession.setActionHandler('nexttrack', function () {
-        //     log('> User clicked "Next Track" icon.');
-        //     index = (index + 1) % playlist.length;
-        //     playAudio();
-        // });
-
-        // audio.addEventListener('ended', function () {
-        //     // Play automatically the next track when audio ends.
-        //     index = (index - 1 + playlist.length) % playlist.length;
-        //     playAudio();
-        // });
-
         function togglePlayback() {
             player.controls = true
-            if (player.currentSrc === "") {
+            if (streamUrl === "") {
                 streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
                 player = new Audio(streamUrl)
             }
             if (player.paused) {
-                player.play().then(_ => updateMetadata()).catch(error => log(error));
+                player.play().then(_ => updateMetadata()).catch(error => console.log(error));
             } else {
                 player.pause()
             }
