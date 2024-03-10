@@ -89,6 +89,9 @@
         playButton.addEventListener(
             "click",
             () => {
+                
+                togglePlayback();
+                
                 if (!audioCtx) {
                     init();
                 }
