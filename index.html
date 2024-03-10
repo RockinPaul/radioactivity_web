@@ -153,9 +153,9 @@
         }
 
         async function togglePlayback() {
-            // player.controls = true;
+            player.controls = true;
             player.src = streamUrl;
-
+        
             if (!isPlaying) {
                 player.play().then(function () {
                     // Automatic playback started!
