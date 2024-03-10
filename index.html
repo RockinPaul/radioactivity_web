@@ -111,6 +111,7 @@
 
         const streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
         let player = new Audio(streamUrl);
+        let isPlaying = false;
 
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
         Telegram.WebApp.onEvent('themeChanged', function () {
@@ -153,8 +154,7 @@
         function togglePlayback() {
             // player.controls = true;
             player.src = streamUrl;
-
-            if (player.paused) {
+            if (!isPlaying) {
                 player.play();
                 console.log("Playback in progress...");
                 // Show main button
@@ -171,6 +171,7 @@
                     text: 'Play'
                 });
             }
+            isPlaying = !isPlaying;
         }
 
         // Function to toggle main TWA button
