@@ -75,7 +75,7 @@
         </div>
         <h1>Modals</h1>
         <button
-            onclick="Telegram.WebApp.showAlert(decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param));">Launch
+            onclick="launchStream();">Launch
             Alert</button>
         <button onclick="launchStream();">Launch</button>
 
@@ -172,6 +172,7 @@
         }
 
         function launchStream() {
+            streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
             Telegram.WebApp.showPopup({
                 title: 'URL to launch',
                 message: streamUrl,
@@ -207,7 +208,9 @@
         }
 
         function togglePlayback() {
-            player.controls = true
+            player.controls = true;
+            player.src = streamUrl;
+
             if (player.paused) {
                 player.play()
                 .then(_ => updateMetadata())
