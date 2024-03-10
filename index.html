@@ -2,110 +2,55 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Telegram Mini Apps Vanilla JS Sample App</title>
-    <style>
-        body {
-            --bg-color: var(--tg-theme-bg-color);
-            font: 12px/18px "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--tg-theme-text-color);
-            margin: 48px 24px;
-            padding: 0;
-            color-scheme: var(--tg-color-scheme);
-        }
-
-        a {
-            color: var(--tg-theme-link-color);
-        }
-
-        #viewport {
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: 0;
-            height: var(--tg-viewport-stable-height, 100vh);
-            pointer-events: none;
-            transition: all .2s ease;
-        }
-
-        #viewport:after {
-            content: '';
-            display: block;
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            border-width: 4px;
-            border-style: solid;
-            border-image: linear-gradient(45deg, rgba(64, 224, 208, .5), rgba(173, 255, 47, .5)) 1;
-        }
-
-        #viewport-params-size,
-        #viewport-params-expand {
-            content: attr(text);
-            position: absolute;
-            display: inline-block;
-            background: var(--tg-theme-link-color, rgb(64, 224, 208));
-            right: 4px;
-            left: auto;
-            font-size: 8px;
-            padding: 4px;
-            vertical-align: top;
-        }
-
-        #viewport-params-size {
-            top: 4px;
-        }
-
-        #viewport-params-expand {
-            top: 30px;
-        }
-    </style>
+    <meta charset="utf-8" />
+    <title>Web Audio API examples: Basics</title>
+    <meta name="description" content="Audio basics demo for Web Audio API" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-    <main>
-        <div align="center">
-            <a href="http://t.me/disaster_info_bot"><img width="48" src="./assets/tapps.png" alt="telegram logo"></a>
+    <div id="boombox">
+        <div class="boombox-handle"></div>
+
+        <div class="boombox-body">
+            <section class="master-controls">
+                <input type="range" id="volume" class="control-volume" min="0" max="2" value="1" list="gain-vals"
+                    step="0.01" data-action="volume" />
+                <datalist id="gain-vals">
+                    <option value="0" label="min"></option>
+                    <option value="2" label="max"></option>
+                </datalist>
+
+                <label for="volume">VOL</label>
+
+                <input type="range" id="panner" class="control-panner" list="pan-vals" min="-1" max="1" value="0"
+                    step="0.01" data-action="panner" />
+                <datalist id="pan-vals">
+                    <option value="-1" label="left"></option>
+                    <option value="1" label="right"></option>
+                </datalist>
+
+                <label for="panner">PAN</label>
+
+            </section>
+
+            <section class="tape">
+                <audio src="outfoxing.mp3" crossorigin="anonymous"></audio>
+
+                <!-- 			type="audio/mpeg" -->
+
+                <button data-playing="false" class="tape-controls-play" role="switch" aria-checked="false">
+                    <span>Play/Pause</span>
+                </button>
+            </section>
         </div>
-        <h1>Modals</h1>
-        <button
-            onclick="launchStream();">Launch
-            Alert</button>
-        <button onclick="launchStream();">Launch</button>
+        <!-- boombox-body -->
+    </div>
 
-        <h1>Links</h1>
-        <ul>
-            <li>
-                <a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/trendingapps');">Open link within
-                    Telegram</a>
-            </li>
-            <li>
-                <a href="javascript:Telegram.WebApp.openLink('https://ton.org/');">Open link in external browser</a>
-            </li>
-            <li>
-                <a href="javascript:Telegram.WebApp.openLink('https://telegra.ph/api',{try_instant_view:true});">Open
-                    link inside Telegram webview</a>
-            </li>
-            <button onclick="togglePlayback();" align="center" width="48" height="48">Toggle playback</button>
+    <script type="text/javascript">
+        console.clear();
 
-            <!-- <button id="playButton">▶ PLAY</button> -->
-        </ul>
-
-        <h1>Buttons</h1>
-        <button onclick="Telegram.WebApp.expand();">Expand Webview</button>
-        <button onclick="toggleMainButton();">Toggle Main Button</button>
-    </main>
-    <div id="viewport"></div>
-    <div id="viewport-params-size"></div>
-    <div id="viewport-params-expand"></div>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script>
         // Init TWA
         Telegram.WebApp.ready();
 
@@ -130,46 +75,89 @@
         });
         Telegram.WebApp.MainButton.show();
 
+        // instigate our audio context
+        let audioCtx;
 
-        // if (!('mediaSession' in navigator)) {
-        //     console.log('The Media Session API is not yet available. Try Chrome for Android.');
-        // }
-        // This prevents unnecessary errors when Media Session API is not available.
-        // navigator.mediaSession = navigator.mediaSession || {};
-        // navigator.mediaSession.setActionHandler = navigator.mediaSession.setActionHandler || function () { };
-        // window.MediaMetadata = window.MediaMetadata || function () { };
+        // load some sound
+        const audioElement = document.querySelector("audio");
+        audioElement.src = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
+        let track;
 
-        /* Play & Pause */
+        const playButton = document.querySelector(".tape-controls-play");
 
-        // navigator.mediaSession.setActionHandler('play', async function () {
-        //     // await player.play();
-        //     togglePlayback();
-        //     // Do something more than just playing audio...
-        // });
+        // play pause audio
+        playButton.addEventListener(
+            "click",
+            () => {
+                if (!audioCtx) {
+                    init();
+                }
 
-        // navigator.mediaSession.setActionHandler('pause', function () {
-        //     // log('> User clicked "Pause" icon.');
-        //     // player.pause();
-        //     togglePlayback();
-        //     // Do something more than just pausing audio...
-        // });
+                // check if context is in suspended state (autoplay policy)
+                if (audioCtx.state === "suspended") {
+                    audioCtx.resume();
+                }
 
-        // audio.addEventListener('play', function () {
-        //     navigator.mediaSession.playbackState = 'playing';
-        // });
+                if (playButton.dataset.playing === "false") {
+                    audioElement.play();
+                    playButton.dataset.playing = "true";
+                    // if track is playing pause it
+                } else if (playButton.dataset.playing === "true") {
+                    audioElement.pause();
+                    playButton.dataset.playing = "false";
+                }
 
-        // audio.addEventListener('pause', function () {
-        //     navigator.mediaSession.playbackState = 'paused';
-        // });
+                // Toggle the state between play and not playing
+                let state =
+                    playButton.getAttribute("aria-checked") === "true" ? true : false;
+                playButton.setAttribute("aria-checked", state ? "false" : "true");
+            },
+            false
+        );
 
-        // try {
-        //     navigator.mediaSession.setActionHandler('stop', function () {
-        //         // log('> User clicked "Stop" icon.');
-        //         // TODO: Clear UI playback...
-        //     });
-        // } catch (error) {
-        //     // log('Warning! The "stop" media session action is not supported.');
-        // }
+        // If track ends
+        audioElement.addEventListener(
+            "ended",
+            () => {
+                playButton.dataset.playing = "false";
+                playButton.setAttribute("aria-checked", "false");
+            },
+            false
+        );
+
+        function init() {
+            audioCtx = new AudioContext();
+            track = new MediaElementAudioSourceNode(audioCtx, {
+                mediaElement: audioElement,
+            });
+
+            // Create the node that controls the volume.
+            const gainNode = new GainNode(audioCtx);
+
+            const volumeControl = document.querySelector('[data-action="volume"]');
+            volumeControl.addEventListener(
+                "input",
+                () => {
+                    gainNode.gain.value = volumeControl.value;
+                },
+                false
+            );
+
+            // Create the node that controls the panning
+            const panner = new StereoPannerNode(audioCtx, { pan: 0 });
+
+            const pannerControl = document.querySelector('[data-action="panner"]');
+            pannerControl.addEventListener(
+                "input",
+                () => {
+                    panner.pan.value = pannerControl.value;
+                },
+                false
+            );
+
+            // connect our graph
+            track.connect(gainNode).connect(panner).connect(audioCtx.destination);
+        }
 
         function launchStream() {
             streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
@@ -208,40 +196,6 @@
             }
         }
 
-        // Function to call showPopup API
-        function showPopup() {
-            Telegram.WebApp.showPopup({
-                title: 'Title',
-                message: 'Some message',
-                buttons: [
-                    { id: 'link', type: 'default', text: 'Open ton.org' },
-                    { type: 'cancel' },
-                ]
-            }, function (btn) {
-                if (btn === 'link') {
-                    Telegram.WebApp.openLink('https://ton.org/');
-                }
-            });
-        };
-
-        // Function to toggle main TWA button
-        function toggleMainButton() {
-            if (Telegram.WebApp.MainButton.isVisible) {
-                Telegram.WebApp.MainButton.hide();
-            } else {
-                Telegram.WebApp.MainButton.show();
-            }
-        };
-
-        function setViewportData() {
-            var sizeEl = document.getElementById('viewport-params-size');
-            sizeEl.innerText = 'width: ' + window.innerWidth + ' x ' +
-                'height: ' + Telegram.WebApp.viewportStableHeight;
-
-            var expandEl = document.querySelector('#viewport-params-expand');
-            expandEl.innerText = 'Is Expanded: ' + (Telegram.WebApp.isExpanded ? 'true' : 'false');
-        }
-
         // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem.
         function bytesToBase64(bytes) {
             const binString = String.fromCodePoint(...bytes);
@@ -269,12 +223,7 @@
         Telegram.WebApp.onEvent('themeChanged', function () {
             document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
         });
-
-        // Play button selector.
-        // document.querySelector('#playButton').addEventListener('click', togglePlayback);
-
     </script>
-
     <!-- Eruda is console for mobile browsers -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
