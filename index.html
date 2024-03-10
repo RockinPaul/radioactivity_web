@@ -74,7 +74,7 @@
             <a href="http://t.me/disaster_info_bot"><img width="48" src="./assets/tapps.png" alt="telegram logo"></a>
         </div>
         <h1>Modals</h1>
-        
+
         <button onclick="launchStream();">Launch</button>
 
         <h1>Links</h1>
@@ -119,10 +119,12 @@
 
         // Show main button
         Telegram.WebApp.MainButton.setParams({
-            text: 'Main Button'
+            text: 'Play'
         });
+
         Telegram.WebApp.MainButton.onClick(function () {
-            Telegram.WebApp.showAlert('Main Button was clicked')
+            // Telegram.WebApp.showAlert('Main Button was clicked')
+            togglePlayback();
         });
         Telegram.WebApp.MainButton.show();
 
@@ -155,11 +157,19 @@
             if (player.paused) {
                 player.play();
                 console.log("Playback in progress...");
+                // Show main button
+                Telegram.WebApp.MainButton.setParams({
+                    text: 'Pause'
+                });
                 // .then(_ => console.log("Playback in progress..."))
                 // .catch(error => console.log(error));
             } else {
                 player.pause();
                 console.log("Playback paused.");
+                // Show main button
+                Telegram.WebApp.MainButton.setParams({
+                    text: 'Play'
+                });
             }
         }
 
