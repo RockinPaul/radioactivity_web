@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Web Audio API examples: Basics</title>
+    <meta name="description" content="Audio basics demo for Web Audio API" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <div id="boombox">
+        <div class="boombox-handle"></div>
+
+        <div class="boombox-body">
+            <section class="master-controls">
+                <input type="range" id="volume" class="control-volume" min="0" max="2" value="1" list="gain-vals"
+                    step="0.01" data-action="volume" />
+                <datalist id="gain-vals">
+                    <option value="0" label="min"></option>
+                    <option value="2" label="max"></option>
+                </datalist>
+
+                <label for="volume">VOL</label>
+
+                <input type="range" id="panner" class="control-panner" list="pan-vals" min="-1" max="1" value="0"
+                    step="0.01" data-action="panner" />
+                <datalist id="pan-vals">
+                    <option value="-1" label="left"></option>
+                    <option value="1" label="right"></option>
+                </datalist>
+
+                <label for="panner">PAN</label>
+
+            </section>
+
+            <section class="tape">
+                <audio src="outfoxing.mp3" crossorigin="anonymous"></audio>
+
+                <!-- 			type="audio/mpeg" -->
+
+                <button data-playing="false" class="tape-controls-play" role="switch" aria-checked="false">
+                    <span>Play/Pause</span>
+                </button>
+            </section>
+        </div>
+        <!-- boombox-body -->
+    </div>
+
+    <script type="text/javascript">
+        console.clear();
+
+        // Init TWA
+        Telegram.WebApp.ready();
+
+        // TODO: override style settings in CSS.
+        Telegram.WebApp.backgroundColor = "#000000"
+        document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
+
+        const streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
+        let player = new Audio(streamUrl);
+
+        // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
+        Telegram.WebApp.onEvent('themeChanged', function () {
+            document.documentElement.className = Telegram.WebApp.colorScheme;
+        });
+
+        // Show main button
+        Telegram.WebApp.MainButton.setParams({
+            text: 'Main Button'
+        });
+        Telegram.WebApp.MainButton.onClick(function () {
+            Telegram.WebApp.showAlert('Main Button was clicked')
+        });
+        Telegram.WebApp.MainButton.show();
+
+        // instigate our audio context
+        let audioCtx;
+
+        // load some sound
+        const audioElement = document.querySelector("audio");
+        audioElement.src = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
+        let track;
+
+        const playButton = document.querySelector(".tape-controls-play");
+
+        // play pause audio
+        playButton.addEventListener(
+            "click",
+            () => {
+                
+                togglePlayback();
+                
+                if (!audioCtx) {
+                    init();
+                }
+
+                // check if context is in suspended state (autoplay policy)
+                if (audioCtx.state === "suspended") {
+                    audioCtx.resume();
+                }
+
+                if (playButton.dataset.playing === "false") {
+                    audioElement.play();
+                    playButton.dataset.playing = "true";
+                    // if track is playing pause it
+                } else if (playButton.dataset.playing === "true") {
+                    audioElement.pause();
+                    playButton.dataset.playing = "false";
+                }
+
+                // Toggle the state between play and not playing
+                let state =
+                    playButton.getAttribute("aria-checked") === "true" ? true : false;
+                playButton.setAttribute("aria-checked", state ? "false" : "true");
+            },
+            false
+        );
+
+        // If track ends
+        audioElement.addEventListener(
+            "ended",
+            () => {
+                playButton.dataset.playing = "false";
+                playButton.setAttribute("aria-checked", "false");
+            },
+            false
+        );
+
+        function init() {
+            audioCtx = new AudioContext();
+            track = new MediaElementAudioSourceNode(audioCtx, {
+                mediaElement: audioElement,
+            });
+
+            // Create the node that controls the volume.
+            const gainNode = new GainNode(audioCtx);
+
+            const volumeControl = document.querySelector('[data-action="volume"]');
+            volumeControl.addEventListener(
+                "input",
+                () => {
+                    gainNode.gain.value = volumeControl.value;
+                },
+                false
+            );
+
+            // Create the node that controls the panning
+            const panner = new StereoPannerNode(audioCtx, { pan: 0 });
+
+            const pannerControl = document.querySelector('[data-action="panner"]');
+            pannerControl.addEventListener(
+                "input",
+                () => {
+                    panner.pan.value = pannerControl.value;
+                },
+                false
+            );
+
+            // connect our graph
+            track.connect(gainNode).connect(panner).connect(audioCtx.destination);
+        }
+
+        function launchStream() {
+            streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
+            Telegram.WebApp.showPopup({
+                title: 'URL to launch',
+                message: streamUrl,
+                buttons: [
+                    { id: 'link', type: 'default', text: 'Play' },
+                    { type: 'cancel' },
+                ]
+            }, function (btn) {
+                if (btn === 'link') {
+
+                    // streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+                    // player = new Audio(streamUrl)
+                    // togglePlayback()
+                    // Telegram.WebApp.openLink(streamUrl, { 
+                    //     try_instant_view: true
+                    // });
+                }
+            });
+        }
+
+        function togglePlayback() {
+            // player.controls = true;
+            player.src = streamUrl;
+
+            if (player.paused) {
+                player.play();
+                console.log("Playback in progress...");
+                // .then(_ => console.log("Playback in progress..."))
+                // .catch(error => console.log(error));
+            } else {
+                player.pause();
+                console.log("Playback paused.");
+            }
+        }
+
+        // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem.
+        function bytesToBase64(bytes) {
+            const binString = String.fromCodePoint(...bytes);
+            return btoa(binString);
+        }
+
+        // From https://developer.mozilla.org/en-US/docs/Glossary/Base64#the_unicode_problem.
+        function base64ToBytes(base64) {
+            const binString = atob(base64);
+            return Uint8Array.from(binString, (m) => m.codePointAt(0));
+        }
+
+        function decodeUrl(validUTF16StringEncoded) {
+            // aHR0cHM6Ly9kZWx0YS5yYWRpb3BsYXllci5jb20uYXIvc3RyZWFtL2xvczQw
+            const validUTF16StringDecoded = new TextDecoder().decode(base64ToBytes(validUTF16StringEncoded));
+            console.log(`Decoded string: [${validUTF16StringDecoded}]`);
+            return validUTF16StringDecoded
+        }
+
+        Telegram.WebApp.setHeaderColor('secondary_bg_color');
+
+        setViewportData();
+        Telegram.WebApp.onEvent('viewportChanged', setViewportData);
+
+        Telegram.WebApp.onEvent('themeChanged', function () {
+            document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
+        });
+    </script>
+    <!-- Eruda is console for mobile browsers -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
+</body>
+
+</html>
