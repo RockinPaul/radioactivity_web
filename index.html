@@ -127,6 +127,7 @@
             // Telegram.WebApp.showAlert('Main Button was clicked')
             togglePlayback();
         });
+
         Telegram.WebApp.MainButton.show();
 
         function launchStream() {
@@ -154,15 +155,15 @@
         function togglePlayback() {
             // player.controls = true;
             player.src = streamUrl;
+
             if (!isPlaying) {
+
                 player.play();
                 console.log("Playback in progress...");
                 // Show main button
                 Telegram.WebApp.MainButton.setParams({
                     text: 'Pause'
                 });
-                // .then(_ => console.log("Playback in progress..."))
-                // .catch(error => console.log(error));
             } else {
                 player.pause();
                 console.log("Playback paused.");
@@ -207,7 +208,7 @@
         function decodeUrl(validUTF16StringEncoded) {
             // aHR0cHM6Ly9kZWx0YS5yYWRpb3BsYXllci5jb20uYXIvc3RyZWFtL2xvczQw
             const validUTF16StringDecoded = new TextDecoder().decode(base64ToBytes(validUTF16StringEncoded));
-            console.log(`Decoded string: [${validUTF16StringDecoded}]`);
+            console.log(`Decoded string: ${validUTF16StringDecoded}`);
             return validUTF16StringDecoded
         }
 
