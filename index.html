@@ -172,7 +172,7 @@
         }
 
         function launchStream() {
-            streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param)
+            streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
             Telegram.WebApp.showPopup({
                 title: 'URL to launch',
                 message: streamUrl,
@@ -209,8 +209,6 @@
 
         function togglePlayback() {
             player.controls = true;
-            player.src = streamUrl;
-
             if (player.paused) {
                 player.play()
                 .then(_ => updateMetadata())
