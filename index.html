@@ -74,13 +74,11 @@
             <a href="http://t.me/disaster_info_bot"><img width="48" src="./assets/tapps.png" alt="telegram logo"></a>
         </div>
         <h1>Modals</h1>
-        <button
-            onclick="launchStream();">Launch
-            Alert</button>
+        
         <button onclick="launchStream();">Launch</button>
 
         <h1>Links</h1>
-        <ul>
+        <!-- <ul>
             <li>
                 <a href="javascript:Telegram.WebApp.openTelegramLink('https://t.me/trendingapps');">Open link within
                     Telegram</a>
@@ -92,14 +90,12 @@
                 <a href="javascript:Telegram.WebApp.openLink('https://telegra.ph/api',{try_instant_view:true});">Open
                     link inside Telegram webview</a>
             </li>
-            <button onclick="togglePlayback();" align="center" width="48" height="48">Toggle playback</button>
-
-            <!-- <button id="playButton">▶ PLAY</button> -->
-        </ul>
+        </ul> -->
 
         <h1>Buttons</h1>
         <button onclick="Telegram.WebApp.expand();">Expand Webview</button>
         <button onclick="toggleMainButton();">Toggle Main Button</button>
+        <button onclick="togglePlayback();">Toggle playback</button>
     </main>
     <div id="viewport"></div>
     <div id="viewport-params-size"></div>
@@ -129,47 +125,6 @@
             Telegram.WebApp.showAlert('Main Button was clicked')
         });
         Telegram.WebApp.MainButton.show();
-
-
-        // if (!('mediaSession' in navigator)) {
-        //     console.log('The Media Session API is not yet available. Try Chrome for Android.');
-        // }
-        // This prevents unnecessary errors when Media Session API is not available.
-        // navigator.mediaSession = navigator.mediaSession || {};
-        // navigator.mediaSession.setActionHandler = navigator.mediaSession.setActionHandler || function () { };
-        // window.MediaMetadata = window.MediaMetadata || function () { };
-
-        /* Play & Pause */
-
-        // navigator.mediaSession.setActionHandler('play', async function () {
-        //     // await player.play();
-        //     togglePlayback();
-        //     // Do something more than just playing audio...
-        // });
-
-        // navigator.mediaSession.setActionHandler('pause', function () {
-        //     // log('> User clicked "Pause" icon.');
-        //     // player.pause();
-        //     togglePlayback();
-        //     // Do something more than just pausing audio...
-        // });
-
-        // audio.addEventListener('play', function () {
-        //     navigator.mediaSession.playbackState = 'playing';
-        // });
-
-        // audio.addEventListener('pause', function () {
-        //     navigator.mediaSession.playbackState = 'paused';
-        // });
-
-        // try {
-        //     navigator.mediaSession.setActionHandler('stop', function () {
-        //         // log('> User clicked "Stop" icon.');
-        //         // TODO: Clear UI playback...
-        //     });
-        // } catch (error) {
-        //     // log('Warning! The "stop" media session action is not supported.');
-        // }
 
         function launchStream() {
             streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
@@ -207,22 +162,6 @@
                 console.log("Playback paused.");
             }
         }
-
-        // Function to call showPopup API
-        function showPopup() {
-            Telegram.WebApp.showPopup({
-                title: 'Title',
-                message: 'Some message',
-                buttons: [
-                    { id: 'link', type: 'default', text: 'Open ton.org' },
-                    { type: 'cancel' },
-                ]
-            }, function (btn) {
-                if (btn === 'link') {
-                    Telegram.WebApp.openLink('https://ton.org/');
-                }
-            });
-        };
 
         // Function to toggle main TWA button
         function toggleMainButton() {
