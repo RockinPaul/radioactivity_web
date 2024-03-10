@@ -157,22 +157,28 @@
             player.src = streamUrl;
 
             if (!isPlaying) {
-
-                player.play();
-                console.log("Playback in progress...");
-                // Show main button
-                Telegram.WebApp.MainButton.setParams({
-                    text: 'Pause'
+                player.play().then(function () {
+                    // Automatic playback started!
+                    isPlaying = true;
+                    console.log("Playback in progress...");
+                    // Show main button
+                    Telegram.WebApp.MainButton.setParams({
+                        text: 'Pause'
+                    });
+                }).catch(function (error) {
+                    // Automatic playback failed.
+                    // Show a UI element to let the user manually start playback.
+                    console.log(`Playback faled: ${error}`);
                 });
             } else {
                 player.pause();
+                isPlaying = false;
                 console.log("Playback paused.");
                 // Show main button
                 Telegram.WebApp.MainButton.setParams({
                     text: 'Play'
                 });
             }
-            isPlaying = !isPlaying;
         }
 
         // Function to toggle main TWA button
