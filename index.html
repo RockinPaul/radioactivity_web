@@ -193,26 +193,15 @@
             });
         }
 
-        function updateMetadata() {
-            let track = streamUrl;
-
-            // log('Playing ' + streamUrl + '...');
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: "Radio",
-                artist: "Artist",
-                album: "Album",
-                artwork: "https://storage.googleapis.com/media-session/sintel/artwork-96.png"
-            });
-        }
-
         function togglePlayback() {
             player.controls = true;
             if (player.paused) {
                 player.play()
-                .then(_ => updateMetadata())
+                .then(_ => console.log("Playback in progress..."))
                 .catch(error => console.log(error));
             } else {
-                player.pause()
+                player.pause();
+                console.log("Playback paused.");
             }
         }
 
