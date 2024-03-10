@@ -196,15 +196,13 @@
         function updateMetadata() {
             let track = streamUrl;
 
-            log('Playing ' + streamUrl + '...');
+            // log('Playing ' + streamUrl + '...');
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: "Radio",
                 artist: "Artist",
                 album: "Album",
                 artwork: "https://storage.googleapis.com/media-session/sintel/artwork-96.png"
             });
-            // Media is loaded, set the duration.
-            updatePositionState();
         }
 
         function togglePlayback() {
