@@ -114,7 +114,7 @@
         document.body.setAttribute('style', '--bg-color:' + Telegram.WebApp.backgroundColor);
 
         let streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
-        let player = new Audio();
+        let player = new Audio(streamUrl);
 
         // Event occurs whenever theme settings are changed in the user's Telegram app (including switching to night mode).
         Telegram.WebApp.onEvent('themeChanged', function () {
