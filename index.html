@@ -92,9 +92,9 @@
                 <a href="javascript:Telegram.WebApp.openLink('https://telegra.ph/api',{try_instant_view:true});">Open
                     link inside Telegram webview</a>
             </li>
-            <button onclick="togglePlayback();">Toggle playback</button>
+            <button onclick="togglePlayback();" align="center" width="48" height="48">Toggle playback</button>
 
-            <button id="playButton">▶ PLAY</button>
+            <!-- <button id="playButton">▶ PLAY</button> -->
         </ul>
 
         <h1>Buttons</h1>
@@ -131,45 +131,45 @@
         Telegram.WebApp.MainButton.show();
 
 
-        if (!('mediaSession' in navigator)) {
-            console.log('The Media Session API is not yet available. Try Chrome for Android.');
-        }
+        // if (!('mediaSession' in navigator)) {
+        //     console.log('The Media Session API is not yet available. Try Chrome for Android.');
+        // }
         // This prevents unnecessary errors when Media Session API is not available.
-        navigator.mediaSession = navigator.mediaSession || {};
-        navigator.mediaSession.setActionHandler = navigator.mediaSession.setActionHandler || function () { };
-        window.MediaMetadata = window.MediaMetadata || function () { };
+        // navigator.mediaSession = navigator.mediaSession || {};
+        // navigator.mediaSession.setActionHandler = navigator.mediaSession.setActionHandler || function () { };
+        // window.MediaMetadata = window.MediaMetadata || function () { };
 
         /* Play & Pause */
 
-        navigator.mediaSession.setActionHandler('play', async function () {
-            // await player.play();
-            togglePlayback();
-            // Do something more than just playing audio...
-        });
+        // navigator.mediaSession.setActionHandler('play', async function () {
+        //     // await player.play();
+        //     togglePlayback();
+        //     // Do something more than just playing audio...
+        // });
 
-        navigator.mediaSession.setActionHandler('pause', function () {
-            // log('> User clicked "Pause" icon.');
-            // player.pause();
-            togglePlayback();
-            // Do something more than just pausing audio...
-        });
+        // navigator.mediaSession.setActionHandler('pause', function () {
+        //     // log('> User clicked "Pause" icon.');
+        //     // player.pause();
+        //     togglePlayback();
+        //     // Do something more than just pausing audio...
+        // });
 
-        audio.addEventListener('play', function () {
-            navigator.mediaSession.playbackState = 'playing';
-        });
+        // audio.addEventListener('play', function () {
+        //     navigator.mediaSession.playbackState = 'playing';
+        // });
 
-        audio.addEventListener('pause', function () {
-            navigator.mediaSession.playbackState = 'paused';
-        });
+        // audio.addEventListener('pause', function () {
+        //     navigator.mediaSession.playbackState = 'paused';
+        // });
 
-        try {
-            navigator.mediaSession.setActionHandler('stop', function () {
-                // log('> User clicked "Stop" icon.');
-                // TODO: Clear UI playback...
-            });
-        } catch (error) {
-            // log('Warning! The "stop" media session action is not supported.');
-        }
+        // try {
+        //     navigator.mediaSession.setActionHandler('stop', function () {
+        //         // log('> User clicked "Stop" icon.');
+        //         // TODO: Clear UI playback...
+        //     });
+        // } catch (error) {
+        //     // log('Warning! The "stop" media session action is not supported.');
+        // }
 
         function launchStream() {
             streamUrl = decodeUrl(window.Telegram.WebApp.initDataUnsafe.start_param);
@@ -194,11 +194,12 @@
         }
 
         function togglePlayback() {
-            player.controls = true;
+            // player.controls = true;
             if (player.paused) {
-                player.play()
-                .then(_ => console.log("Playback in progress..."))
-                .catch(error => console.log(error));
+                player.play();
+                console.log("Playback in progress...");
+                // .then(_ => console.log("Playback in progress..."))
+                // .catch(error => console.log(error));
             } else {
                 player.pause();
                 console.log("Playback paused.");
@@ -268,7 +269,7 @@
         });
 
         // Play button selector.
-        document.querySelector('#playButton').addEventListener('click', togglePlayback);
+        // document.querySelector('#playButton').addEventListener('click', togglePlayback);
 
     </script>
 
